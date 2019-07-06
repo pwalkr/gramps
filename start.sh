@@ -6,7 +6,14 @@ Usage: start.sh <command>
 
 Commands:
 
+    docs  Show the gramps manual (man page)
+
     gramps  Start gramps GUI application
+
+    report <OPTION STRING>
+        Generate a report specified and configured by the options string. See
+        the "docs" command for more info. This command sets --action=report and
+        ends with --options (all actions require options).
 
     shell  Start a shell in the docker environment (for development)
 
@@ -27,12 +34,21 @@ as_user="--user $(id -u):$(id -g)"
 with_gui="--volume /tmp/.X11-unix:/tmp/.X11-unix --env DISPLAY=$DISPLAY"
 
 case "$1" in
+    docs)
+        set -x
+        $run_docker $with_gui $as_user gramps --help
+        ;;
     gramps)
         set -x
         $run_docker $with_gui $as_user gramps
         ;;
     help)
         usage
+        ;;
+    report)
+        shift
+        set -x
+        $run_docker $with_gui $as_user gramps --action=report --options "$@"
         ;;
     shell)
         set -x
